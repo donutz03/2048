@@ -34,6 +34,7 @@ public partial class MainWindow : Window
         this.Content = myGrid;
         int[,] matrix2048 = Get2048Matrix();
         moveArrayRight(matrix2048);
+
     }
     
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
@@ -60,7 +61,16 @@ public partial class MainWindow : Window
     {
         for (int i = 0; i < 4; i++)
         {
-            
+            TextBlock[] row = new TextBlock[4];
+            for (int j = 0; j < 4; j++)
+            {
+                row[3-j] = myGrid.Children.OfType<TextBlock>()
+                    .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+            }
+           //8 8 4 2 -> 16 4 2
+           //4 4 4 4 -> 8 8 0 0 
+           // 4 8 2 2 -> 4 8 4 0
+           // 4 4 8 8 -> 8 16 0 0 
         }
     }
 
