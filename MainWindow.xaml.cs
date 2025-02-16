@@ -20,6 +20,19 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         Grid myGrid = new Grid();
+        GridInit(myGrid);
+
+        int[] startPosition = randomPosition();
+        
+        GetTextBlock(startPosition[0], startPosition[2], 
+            startPosition[4].ToString(), myGrid);
+        GetTextBlock(startPosition[1], startPosition[3], 
+            startPosition[5].ToString(), myGrid);
+        this.Content = myGrid;
+    }
+
+    private static void GridInit(Grid myGrid)
+    {
         myGrid.Width = 250;
         myGrid.Height = 100;
         myGrid.HorizontalAlignment = HorizontalAlignment.Center;
@@ -37,26 +50,19 @@ public partial class MainWindow : Window
             RowDefinition rowDef = new RowDefinition();
             myGrid.RowDefinitions.Add(rowDef);
         }
+    }
 
-        int[] startPosition = randomPosition();
-        TextBlock txt1 = new TextBlock();
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                TextBlock txt = new TextBlock();
-                txt.Text = "0";
-                txt.FontSize = 20;
-                txt.TextAlignment = TextAlignment.Center;
-                txt.VerticalAlignment = VerticalAlignment.Center;
-                txt.HorizontalAlignment = HorizontalAlignment.Center;
-                Grid.SetRow(txt, i);
-                Grid.SetColumn(txt, j);
-                myGrid.Children.Add(txt);
-            }
-        }
-
-        this.Content = myGrid;
+    private static void GetTextBlock(int i, int j, String numberInPosition, Grid myGrid)
+    {
+        TextBlock txt = new TextBlock();
+        txt.Text = numberInPosition;
+        txt.FontSize = 20;
+        txt.TextAlignment = TextAlignment.Center;
+        txt.VerticalAlignment = VerticalAlignment.Center;
+        txt.HorizontalAlignment = HorizontalAlignment.Center;
+        Grid.SetRow(txt, i);
+        Grid.SetColumn(txt, j);
+        myGrid.Children.Add(txt);
     }
 
     int[] randomPosition()
