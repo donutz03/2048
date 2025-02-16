@@ -21,7 +21,7 @@ public partial class MainWindow : Window
     {
         
         InitializeComponent();
-        this.KeyDown += MainWindow_KeyDown;
+        KeyDown += MainWindow_KeyDown;
         myGrid = new Grid();
         GridInit(myGrid);
 
@@ -38,15 +38,14 @@ public partial class MainWindow : Window
     
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
+        int[,] matrix2048 = Get2048Matrix();
         if (e.Key == Key.Left)
         {
-            MessageBox.Show("Ai apăsat săgeata stânga!");
+            moveArrayLeft(matrix2048);
         }
         else if (e.Key == Key.Right)
         {
-            int[,] matrix2048 = Get2048Matrix();
             moveArrayRight(matrix2048);
-            // MessageBox.Show("Ai apăsat săgeata dreapta!");
         }
         else if (e.Key == Key.Up)
         {
@@ -119,6 +118,68 @@ public partial class MainWindow : Window
             }
         }
     }
+    
+    private static void moveArrayLeft(int[,] array)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        int[] currentRow = new int[4];
+        for (int j = 0; j < 4; j++)
+        {
+            currentRow[j] = array[i, j];
+        }
+
+        for (int step = 0; step < 3; step++)
+        {
+            for (int j = 0; j < 3; j++) 
+            {
+                if (currentRow[j] == 0)
+                {
+                    currentRow[j] = currentRow[j + 1];
+                    currentRow[j + 1] = 0;
+                }
+            }
+
+            for (int j = 0; j < 4; j++)
+            {
+                TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                    .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+                tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
+            }
+        }
+
+        for (int j = 0; j < 3; j++) 
+        {
+            if (currentRow[j] == currentRow[j + 1] && currentRow[j] != 0)
+            {
+                currentRow[j] *= 2;
+                currentRow[j + 1] = 0;
+
+                for (int k = 0; k < 4; k++)
+                {
+                    TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                        .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == k);
+                    tb.Text = currentRow[k] == 0 ? "" : currentRow[k].ToString();
+                }
+
+                for (int k = j + 1; k < 3; k++)
+                {
+                    if (currentRow[k] == 0)
+                    {
+                        currentRow[k] = currentRow[k + 1];
+                        currentRow[k + 1] = 0;
+                    }
+                }
+            }
+        }
+
+        for (int j = 0; j < 4; j++)
+        {
+            array[i, j] = currentRow[j];
+        }
+    }
+}
+
 
     private static string getValueFromCell(int i, int j)
     {
