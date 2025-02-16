@@ -31,9 +31,8 @@ public partial class MainWindow : Window
             startPosition[4].ToString(), myGrid);
         GetTextBlock(startPosition[1], startPosition[3], 
             startPosition[5].ToString(), myGrid);
-        this.Content = myGrid;
-        int[,] matrix2048 = Get2048Matrix();
-        moveArrayRight(matrix2048);
+        Content = myGrid;
+        
 
     }
     
@@ -45,7 +44,9 @@ public partial class MainWindow : Window
         }
         else if (e.Key == Key.Right)
         {
-            MessageBox.Show("Ai apăsat săgeata dreapta!");
+            int[,] matrix2048 = Get2048Matrix();
+            moveArrayRight(matrix2048);
+            // MessageBox.Show("Ai apăsat săgeata dreapta!");
         }
         else if (e.Key == Key.Up)
         {
@@ -61,16 +62,61 @@ public partial class MainWindow : Window
     {
         for (int i = 0; i < 4; i++)
         {
-            TextBlock[] row = new TextBlock[4];
+            int[] currentRow = new int[4];
             for (int j = 0; j < 4; j++)
             {
-                row[3-j] = myGrid.Children.OfType<TextBlock>()
-                    .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+                currentRow[j] = array[i, j];
             }
-           //8 8 4 2 -> 16 4 2
-           //4 4 4 4 -> 8 8 0 0 
-           // 4 8 2 2 -> 4 8 4 0
-           // 4 4 8 8 -> 8 16 0 0 
+
+            for (int step = 0; step < 3; step++)
+            {
+                for (int j = 3; j > 0; j--)
+                {
+                    if (currentRow[j] == 0)
+                    {
+                        currentRow[j] = currentRow[j - 1];
+                        currentRow[j - 1] = 0;
+                    }
+                }
+
+                for (int j = 0; j < 4; j++)
+                {
+                    TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                        .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+                    tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
+                }
+            }
+
+            for (int j = 3; j > 0; j--)
+            {
+                if (currentRow[j] == currentRow[j - 1] && currentRow[j] != 0)
+                {
+                    currentRow[j] *= 2;
+                    currentRow[j - 1] = 0;
+
+                    for (int k = 0; k < 4; k++)
+                    {
+                        TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                            .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == k);
+                        tb.Text = currentRow[k] == 0 ? "" : currentRow[k].ToString();
+                    }
+
+
+                    for (int k = j - 1; k > 0; k--)
+                    {
+                        if (currentRow[k] == 0)
+                        {
+                            currentRow[k] = currentRow[k - 1];
+                            currentRow[k - 1] = 0;
+                        }
+                    }
+                }
+            }
+
+            for (int j = 0; j < 4; j++)
+            {
+                array[i, j] = currentRow[j];
+            }
         }
     }
 
@@ -129,6 +175,13 @@ public partial class MainWindow : Window
             RowDefinition rowDef = new RowDefinition();
             myGrid.RowDefinitions.Add(rowDef);
         }
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                GetTextBlock(i, j, "", myGrid);
+            }
+        }
     }
 
     int[] randomCoordinatesAndNumber()
@@ -163,15 +216,25 @@ public partial class MainWindow : Window
 
     private static void GetTextBlock(int i, int j, String numberInPosition, Grid myGrid)
     {
-        TextBlock txt = new TextBlock();
-        txt.Text = numberInPosition;
-        txt.FontSize = 20;
-        txt.TextAlignment = TextAlignment.Center;
-        txt.VerticalAlignment = VerticalAlignment.Center;
-        txt.HorizontalAlignment = HorizontalAlignment.Center;
-        Grid.SetRow(txt, i);
-        Grid.SetColumn(txt, j);
-        myGrid.Children.Add(txt);
+        TextBlock existingTb = myGrid.Children.OfType<TextBlock>()
+            .FirstOrDefault(tb => Grid.GetRow(tb) == i && Grid.GetColumn(tb) == j);
+
+        if (existingTb != null)
+        {
+            existingTb.Text = numberInPosition;
+        }
+        else
+        {
+            TextBlock txt = new TextBlock();
+            txt.Text = numberInPosition;
+            txt.FontSize = 20;
+            txt.TextAlignment = TextAlignment.Center;
+            txt.VerticalAlignment = VerticalAlignment.Center;
+            txt.HorizontalAlignment = HorizontalAlignment.Center;
+            Grid.SetRow(txt, i);
+            Grid.SetColumn(txt, j);
+            myGrid.Children.Add(txt);
+        }
     }
 
     int[] randomPosition()
@@ -181,20 +244,19 @@ public partial class MainWindow : Window
         
         var columnPosition2 = new Random().Next(4);
         var rowPosition2 = new Random().Next(4);
-        while (columnPosition1 == columnPosition2 && rowPosition1 == rowPosition2)
+        while (columnPosition1 == columnPosition2) 
         {
             columnPosition2 = new Random().Next(4);
-            rowPosition2 = new Random().Next(4);
         }
 
+        while (rowPosition1 == rowPosition2)
+        {
+            rowPosition2 = new Random().Next(4);
+
+        }
         var oddsOfGetting2or4 = Get10PercentOddsFor4InStartingPosition();
         var randomPosition1 = new Random().Next(100);
         var randomPosition2 = new Random().Next(100);
-        
-        while (randomPosition1 == randomPosition2)
-        {
-            randomPosition2 = new Random().Next(100);
-        }
         
         return new int[] { columnPosition1, columnPosition2, 
             rowPosition1, rowPosition2, 
