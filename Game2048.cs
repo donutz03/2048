@@ -5,12 +5,12 @@ namespace game2048cs;
 
 public class Game2048
 {
-    private static Grid myGrid;
+    private readonly Grid _myGrid;
 
     public Game2048(Grid grid)
     {
-        myGrid = grid;
-        GridInit(myGrid);
+        _myGrid = grid;
+        GridInit(_myGrid);
     }
     
     
@@ -37,7 +37,7 @@ public class Game2048
 
                 for (int j = 0; j < 4; j++)
                 {
-                    TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
                         .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
                     tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
                 }
@@ -52,7 +52,7 @@ public class Game2048
 
                     for (int k = 0; k < 4; k++)
                     {
-                        TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                        TextBlock tb = _myGrid.Children.OfType<TextBlock>()
                             .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == k);
                         tb.Text = currentRow[k] == 0 ? "" : currentRow[k].ToString();
                     }
@@ -99,7 +99,7 @@ public class Game2048
 
             for (int j = 0; j < 4; j++)
             {
-                TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                TextBlock tb = _myGrid.Children.OfType<TextBlock>()
                     .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
                 tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
             }
@@ -114,7 +114,7 @@ public class Game2048
 
                 for (int k = 0; k < 4; k++)
                 {
-                    TextBlock tb = myGrid.Children.OfType<TextBlock>()
+                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
                         .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == k);
                     tb.Text = currentRow[k] == 0 ? "" : currentRow[k].ToString();
                 }
@@ -138,9 +138,9 @@ public class Game2048
 }
 
 
-    public  string getValueFromCell(int i, int j)
+    private string GetValueFromCell(int i, int j)
     {
-        foreach (TextBlock textBlock in myGrid.Children)
+        foreach (TextBlock textBlock in _myGrid.Children)
         {
             if (Grid.GetRow(textBlock) == i && Grid.GetColumn(textBlock) == j)
             {
@@ -159,22 +159,22 @@ public class Game2048
         {
             for (int j = 0; j < 4; j++)
             {
-                string value = getValueFromCell(i, j);
+                string value = GetValueFromCell(i, j);
                 if (value.Equals(String.Empty))
                 {
                     matrix2048[i, j] = 0;
                 }
                 else
                 {
-                    matrix2048[i, j] = int.Parse(getValueFromCell(i, j));
+                    matrix2048[i, j] = int.Parse(GetValueFromCell(i, j));
                 }
             }
         }
 
         return matrix2048;
     }
-    
-    public void GridInit(Grid myGrid)
+
+    private void GridInit(Grid myGrid)
     {
         myGrid.Width = 250;
         myGrid.Height = 100;
@@ -204,7 +204,7 @@ public class Game2048
 
     public  void GetTextBlock(int i, int j, String numberInPosition, Grid myGrid)
     {
-        TextBlock existingTb = myGrid.Children.OfType<TextBlock>()
+        TextBlock? existingTb = myGrid.Children.OfType<TextBlock>()
             .FirstOrDefault(tb => Grid.GetRow(tb) == i && Grid.GetColumn(tb) == j);
 
         if (existingTb != null)
@@ -213,19 +213,21 @@ public class Game2048
         }
         else
         {
-            TextBlock txt = new TextBlock();
-            txt.Text = numberInPosition;
-            txt.FontSize = 20;
-            txt.TextAlignment = TextAlignment.Center;
-            txt.VerticalAlignment = VerticalAlignment.Center;
-            txt.HorizontalAlignment = HorizontalAlignment.Center;
+            TextBlock txt = new TextBlock
+            {
+                Text = numberInPosition,
+                FontSize = 20,
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
             Grid.SetRow(txt, i);
             Grid.SetColumn(txt, j);
             myGrid.Children.Add(txt);
         }
     }
 
-    public int[] randomCoordinatesAndNumber()
+    public int[] RandomCoordinatesAndNumber()
     {
        
         var columnPosition1 = new Random().Next(4);
@@ -239,7 +241,7 @@ public class Game2048
             rowPosition2 = new Random().Next(4);
         }
 
-        var oddsOfGetting2or4 = Get10PercentOddsFor4InStartingPosition();
+        var oddsOfGetting2Or4 = Get10PercentOddsFor4InStartingPosition();
         var randomPosition1 = new Random().Next(100);
         var randomPosition2 = new Random().Next(100);
         
@@ -248,10 +250,13 @@ public class Game2048
             randomPosition2 = new Random().Next(100);
         }
         
-        return new int[] { columnPosition1, columnPosition2, 
+        return
+        [
+            columnPosition1, columnPosition2, 
             rowPosition1, rowPosition2, 
-            oddsOfGetting2or4[randomPosition1],
-            oddsOfGetting2or4[randomPosition2] };
+            oddsOfGetting2Or4[randomPosition1],
+            oddsOfGetting2Or4[randomPosition2]
+        ];
      
     }
     
@@ -272,17 +277,20 @@ public class Game2048
             rowPosition2 = new Random().Next(4);
 
         }
-        var oddsOfGetting2or4 = Get10PercentOddsFor4InStartingPosition();
+        var oddsOfGetting2Or4 = Get10PercentOddsFor4InStartingPosition();
         var randomPosition1 = new Random().Next(100);
         var randomPosition2 = new Random().Next(100);
         
-        return new int[] { columnPosition1, columnPosition2, 
+        return
+        [
+            columnPosition1, columnPosition2, 
             rowPosition1, rowPosition2, 
-            oddsOfGetting2or4[randomPosition1],
-            oddsOfGetting2or4[randomPosition2] };
+            oddsOfGetting2Or4[randomPosition1],
+            oddsOfGetting2Or4[randomPosition2]
+        ];
     }
 
-    public static int[] Get10PercentOddsFor4InStartingPosition()
+    private static int[] Get10PercentOddsFor4InStartingPosition()
     {
         int[] oddsOfGetting2Or4 = new int[100];
         var count = 0;
