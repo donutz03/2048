@@ -6,11 +6,13 @@ namespace game2048cs;
 public class Game2048
 {
     private readonly Grid _myGrid;
+    private int[] OddsOfGetting2Or4 { get; }
 
     public Game2048(Grid grid)
     {
         _myGrid = grid;
         GridInit(_myGrid);
+        OddsOfGetting2Or4 = Get10PercentOddsFor4InStartingPosition();
     }
     
     
@@ -363,7 +365,7 @@ public void MoveArrayUp(int[,] array)
             rowPosition2 = new Random().Next(4);
         }
 
-        var oddsOfGetting2Or4 = Get10PercentOddsFor4InStartingPosition();
+        var oddsOfGetting2Or4 = this.OddsOfGetting2Or4;
         var randomPosition1 = new Random().Next(100);
         var randomPosition2 = new Random().Next(100);
         
@@ -399,7 +401,8 @@ public void MoveArrayUp(int[,] array)
             rowPosition2 = new Random().Next(4);
 
         }
-        var oddsOfGetting2Or4 = Get10PercentOddsFor4InStartingPosition();
+
+        var oddsOfGetting2Or4 = this.OddsOfGetting2Or4;
         var randomPosition1 = new Random().Next(100);
         var randomPosition2 = new Random().Next(100);
         
