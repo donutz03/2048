@@ -47,5 +47,7 @@ public partial class MainWindow
         {
             _game.MoveArrayDown(matrix2048);
         }
+        var randomCoordinates = _game.RandomCoordinatesAndNumber(matrix2048);
+        _game.GetTextBlock(randomCoordinates[0], randomCoordinates[1], randomCoordinates[2].ToString(), (Grid)Content);
     }
 }
