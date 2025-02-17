@@ -7,7 +7,7 @@ public class Game2048
 {
     private readonly Grid _myGrid;
     private int[] OddsOfGetting2Or4 { get; }
-    private static readonly Random _random = new Random();
+    private static readonly Random Random = new Random();
 
     public Game2048(Grid grid)
     {
@@ -43,7 +43,7 @@ public class Game2048
                     TextBlock tb = _myGrid.Children.OfType<TextBlock>()
                         .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
                     tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
-                    // textblock.redraw
+                    // TODO: text block.redraw
                 }
             }
 
@@ -375,7 +375,7 @@ public class Game2048
             {
                 if (array[i, j] == 0)
                 {
-                    emptyPositions.Add(new int[] { i, j });
+                    emptyPositions.Add([i, j]);
                 }
             }
         }
@@ -383,11 +383,11 @@ public class Game2048
        
         if (emptyPositions.Count != 0)
         {
-            int randomIndex = _random.Next(emptyPositions.Count);
+            int randomIndex = Random.Next(emptyPositions.Count);
             int[] randomPosition = emptyPositions[randomIndex];
 
         
-            int randomValueIndex = _random.Next(100);
+            int randomValueIndex = Random.Next(100);
         
             return
             [
@@ -404,25 +404,25 @@ public class Game2048
     
     public int[] RandomPosition()
     {
-        var columnPosition1 = _random.Next(4);
-        var rowPosition1 = _random.Next(4);
+        var columnPosition1 = Random.Next(4);
+        var rowPosition1 = Random.Next(4);
         
-        var columnPosition2 = _random.Next(4);
-        var rowPosition2 = _random.Next(4);
+        var columnPosition2 = Random.Next(4);
+        var rowPosition2 = Random.Next(4);
         while (columnPosition1 == columnPosition2) 
         {
-            columnPosition2 = _random.Next(4);
+            columnPosition2 = Random.Next(4);
         }
 
         while (rowPosition1 == rowPosition2)
         {
-            rowPosition2 = _random.Next(4);
+            rowPosition2 = Random.Next(4);
 
         }
 
         var oddsOfGetting2Or4 = OddsOfGetting2Or4;
-        var randomPosition1 = _random.Next(100);
-        var randomPosition2 = _random.Next(100);
+        var randomPosition1 = Random.Next(100);
+        var randomPosition2 = Random.Next(100);
         
         return
         [
@@ -439,7 +439,7 @@ public class Game2048
         var count = 0;
         while (count < 10)
         {
-            var poz = _random.Next(100);
+            var poz = Random.Next(100);
             if (oddsOfGetting2Or4[poz] == 0)
             {
                 oddsOfGetting2Or4[poz] = 4;

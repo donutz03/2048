@@ -26,7 +26,7 @@ public partial class MainWindow
             VerticalAlignment = VerticalAlignment.Center,
             HorizontalAlignment = HorizontalAlignment.Center
         };
-        _myGrid = new Grid(); new Grid();
+        _myGrid = new Grid();
         _game = new Game2048(_myGrid);
         Button newGameButton = new Button
         {
