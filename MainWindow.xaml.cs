@@ -41,11 +41,11 @@ public partial class MainWindow
         }
         else if (e.Key == Key.Up)
         {
-            MessageBox.Show("You pressed up arrow key");
+            _game.MoveArrayUp(matrix2048);
         }
         else if (e.Key == Key.Down)
         {
-            MessageBox.Show("You pressed up arrow key!");
+            _game.MoveArrayDown(matrix2048);
         }
     }
 }

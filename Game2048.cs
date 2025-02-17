@@ -137,7 +137,129 @@ public class Game2048
     }
 }
 
+public void MoveArrayDown(int[,] array)
+{
+    for (int j = 0; j < 4; j++)
+    {
+        int[] currentColumn = new int[4];
+        for (int i = 0; i < 4; i++)
+        {
+            currentColumn[i] = array[i, j];
+        }
 
+        for (int step = 0; step < 3; step++)
+        {
+            for (int i = 3; i > 0; i--)
+            {
+                if (currentColumn[i] == 0)
+                {
+                    currentColumn[i] = currentColumn[i - 1];
+                    currentColumn[i - 1] = 0;
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                    .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+                tb.Text = currentColumn[i] == 0 ? "" : currentColumn[i].ToString();
+            }
+        }
+
+        for (int i = 3; i > 0; i--)
+        {
+            if (currentColumn[i] == currentColumn[i - 1] && currentColumn[i] != 0)
+            {
+                currentColumn[i] *= 2;
+                currentColumn[i - 1] = 0;
+
+                // Actualizare UI după combinare
+                for (int k = 0; k < 4; k++)
+                {
+                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                        .First(e => Grid.GetRow(e) == k && Grid.GetColumn(e) == j);
+                    tb.Text = currentColumn[k] == 0 ? "" : currentColumn[k].ToString();
+                }
+
+                for (int k = i - 1; k > 0; k--)
+                {
+                    if (currentColumn[k] == 0)
+                    {
+                        currentColumn[k] = currentColumn[k - 1];
+                        currentColumn[k - 1] = 0;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            array[i, j] = currentColumn[i];
+        }
+    }
+}
+
+public void MoveArrayUp(int[,] array)
+{
+    for (int j = 0; j < 4; j++)
+    {
+        int[] currentColumn = new int[4];
+        for (int i = 0; i < 4; i++)
+        {
+            currentColumn[i] = array[i, j];
+        }
+
+        for (int step = 0; step < 3; step++)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (currentColumn[i] == 0)
+                {
+                    currentColumn[i] = currentColumn[i + 1];
+                    currentColumn[i + 1] = 0;
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                    .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+                tb.Text = currentColumn[i] == 0 ? "" : currentColumn[i].ToString();
+            }
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (currentColumn[i] == currentColumn[i + 1] && currentColumn[i] != 0)
+            {
+                currentColumn[i] *= 2;
+                currentColumn[i + 1] = 0;
+
+                for (int k = 0; k < 4; k++)
+                {
+                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                        .First(e => Grid.GetRow(e) == k && Grid.GetColumn(e) == j);
+                    tb.Text = currentColumn[k] == 0 ? "" : currentColumn[k].ToString();
+                }
+
+                for (int k = i + 1; k < 3; k++)
+                {
+                    if (currentColumn[k] == 0)
+                    {
+                        currentColumn[k] = currentColumn[k + 1];
+                        currentColumn[k + 1] = 0;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            array[i, j] = currentColumn[i];
+        }
+    }
+}
+    
     private string GetValueFromCell(int i, int j)
     {
         foreach (TextBlock textBlock in _myGrid.Children)
@@ -315,6 +437,6 @@ public class Game2048
 
         return oddsOfGetting2Or4;
     }
-
-
+    
+    
 }
