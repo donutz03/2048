@@ -31,6 +31,7 @@ public partial class MainWindow
     private void MainWindow_KeyDown(object sender, KeyEventArgs e)
     {
         int[,] matrix2048 = _game.Get2048Matrix();
+       
         if (e.Key == Key.Left)
         {
             _game.MoveArrayLeft(matrix2048);
@@ -48,6 +49,10 @@ public partial class MainWindow
             _game.MoveArrayDown(matrix2048);
         }
         var randomCoordinates = _game.RandomCoordinatesAndNumber(matrix2048);
-        _game.GetTextBlock(randomCoordinates[0], randomCoordinates[1], randomCoordinates[2].ToString(), (Grid)Content);
+        if (randomCoordinates != null)
+        {
+            _game.GetTextBlock(randomCoordinates[0], randomCoordinates[1], randomCoordinates[2].ToString(), (Grid)Content);
+        }
+      
     }
 }

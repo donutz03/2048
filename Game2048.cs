@@ -42,6 +42,7 @@ public class Game2048
                     TextBlock tb = _myGrid.Children.OfType<TextBlock>()
                         .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
                     tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
+                    // textblock.redraw
                 }
             }
 
@@ -350,7 +351,7 @@ public class Game2048
         }
     }
 
-    public int[] RandomCoordinatesAndNumber(int[,] array)
+    public int[]? RandomCoordinatesAndNumber(int[,] array)
     {
       
         var oddsOfGetting2Or4 = this.OddsOfGetting2Or4;
@@ -368,19 +369,25 @@ public class Game2048
         }
         
         Random random = new Random();
-        int randomIndex = random.Next(emptyPositions.Count);
-        int[] randomPosition = emptyPositions[randomIndex];
+        if (emptyPositions.Count != 0)
+        {
+            int randomIndex = random.Next(emptyPositions.Count);
+            int[] randomPosition = emptyPositions[randomIndex];
 
         
-        int randomValueIndex = random.Next(100);
+            int randomValueIndex = random.Next(100);
         
-        return
-        [
-            randomPosition[0],  
-            randomPosition[1], 
-            oddsOfGetting2Or4[randomValueIndex],
-        ];
-     
+            return
+            [
+                randomPosition[0],  
+                randomPosition[1], 
+                oddsOfGetting2Or4[randomValueIndex],
+            ];
+        }
+
+        return null;
+
+
     }
     
     public int[] RandomPosition()
@@ -440,5 +447,5 @@ public class Game2048
         return oddsOfGetting2Or4;
     }
     
-    
+
 }
