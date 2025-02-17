@@ -13,9 +13,11 @@ public partial class MainWindow
 {
   
     private readonly Game2048 _game;
+    private bool _wasGameOverShown = false;
 
     public MainWindow()
     {
+        
         InitializeComponent();
         KeyDown += MainWindow_KeyDown;
         Grid myGrid = new Grid();
@@ -53,6 +55,11 @@ public partial class MainWindow
         {
             _game.GetTextBlock(randomCoordinates[0], randomCoordinates[1], randomCoordinates[2].ToString(), (Grid)Content);
         }
-      
+
+        if (_game.IsGameOver(matrix2048) && !_wasGameOverShown)
+        {
+            MessageBox.Show("Game Over");
+            _wasGameOverShown = true;
+        }
     }
 }
