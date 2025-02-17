@@ -300,23 +300,34 @@ public class Game2048
 
     private void GridInit(Grid myGrid)
     {
-        myGrid.Width = 250;
-        myGrid.Height = 100;
-        myGrid.HorizontalAlignment = HorizontalAlignment.Center;
-        myGrid.VerticalAlignment = VerticalAlignment.Center;
-        myGrid.ShowGridLines = true;
-
-        for (int i = 0; i < 4; i++)
+        if (!(myGrid.ColumnDefinitions.Count == 4 && myGrid.RowDefinitions.Count == 4))
         {
-            ColumnDefinition colDef = new ColumnDefinition();
-            myGrid.ColumnDefinitions.Add(colDef);
+            myGrid.Width = 250;
+            myGrid.Height = 100;
+            myGrid.HorizontalAlignment = HorizontalAlignment.Center;
+            myGrid.VerticalAlignment = VerticalAlignment.Center;
+            myGrid.ShowGridLines = true;
         }
         
-        for (int i = 0; i < 4; i++)
+
+        if (myGrid.ColumnDefinitions.Count == 0)
         {
-            RowDefinition rowDef = new RowDefinition();
-            myGrid.RowDefinitions.Add(rowDef);
+            for (int i = 0; i < 4; i++)
+            {
+                ColumnDefinition colDef = new ColumnDefinition();
+                myGrid.ColumnDefinitions.Add(colDef);
+            }
         }
+    
+        if (myGrid.RowDefinitions.Count == 0)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                RowDefinition rowDef = new RowDefinition();
+                myGrid.RowDefinitions.Add(rowDef);
+            }
+        }
+
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
