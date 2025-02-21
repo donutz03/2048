@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace game2048cs;
+namespace game2048cs.model;
 
 public class Game2048
 {

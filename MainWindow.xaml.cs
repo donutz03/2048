@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 
 using System.Windows.Input;
+using game2048cs.model;
 
 
 namespace game2048cs;
