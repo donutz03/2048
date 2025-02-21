@@ -26,7 +26,8 @@ public partial class MainWindow
     {
         
         InitializeComponent();
-        KeyDown += MainWindow_KeyDown;
+        PreviewKeyDown += MainWindow_PreviewKeyDown;
+
 
         var mainContainer = new DockPanel();
         StackPanel gamePanel = new StackPanel
@@ -64,6 +65,50 @@ public partial class MainWindow
         }
     }
 
+    private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+
+        if (e.Key == Key.Left || e.Key == Key.Right ||
+            e.Key == Key.Up || e.Key == Key.Down)
+        {
+            e.Handled = true;
+
+            int[,] matrix2048 = _game.Get2048Matrix();
+
+            if (e.Key == Key.Left)
+            {
+                _game.MoveArrayLeft(matrix2048);
+            }
+            else if (e.Key == Key.Right)
+            {
+                _game.MoveArrayRight(matrix2048);
+            }
+            else if (e.Key == Key.Up)
+            {
+                _game.MoveArrayUp(matrix2048);
+            }
+            else if (e.Key == Key.Down)
+            {
+                _game.MoveArrayDown(matrix2048);
+            }
+
+            var randomCoordinates = _game.RandomCoordinatesAndNumber(matrix2048);
+            if (randomCoordinates != null)
+            {
+                _game.GetTextBlock(randomCoordinates[0], randomCoordinates[1], randomCoordinates[2].ToString(),
+                    _myGrid);
+            }
+
+            if (_game.IsGameOver(matrix2048) && !_wasGameOverShown)
+            {
+                MessageBox.Show("Game Over");
+                _wasGameOverShown = true;
+            }
+
+
+        }
+    }
+
     public void NewGame_Click(object sender, RoutedEventArgs e)
     {
         
@@ -78,36 +123,4 @@ public partial class MainWindow
         _game.GetTextBlock(startPosition[1], startPosition[3], startPosition[5].ToString(), _myGrid);
     }
 
-    private void MainWindow_KeyDown(object sender, KeyEventArgs e)
-    {
-        int[,] matrix2048 = _game.Get2048Matrix();
-       
-        if (e.Key == Key.Left)
-        {
-            _game.MoveArrayLeft(matrix2048);
-        }
-        else if (e.Key == Key.Right)
-        {
-            _game.MoveArrayRight(matrix2048);
-        }
-        else if (e.Key == Key.Up)
-        {
-            _game.MoveArrayUp(matrix2048);
-        }
-        else if (e.Key == Key.Down)
-        {
-            _game.MoveArrayDown(matrix2048);
-        }
-        var randomCoordinates = _game.RandomCoordinatesAndNumber(matrix2048);
-        if (randomCoordinates != null)
-        {
-            _game.GetTextBlock(randomCoordinates[0], randomCoordinates[1], randomCoordinates[2].ToString(), _myGrid);
-        }
-
-        if (_game.IsGameOver(matrix2048) && !_wasGameOverShown)
-        {
-            MessageBox.Show("Game Over");
-            _wasGameOverShown = true;
-        }
-    }
 }
