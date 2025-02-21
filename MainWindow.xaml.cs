@@ -3,7 +3,6 @@ using System.Windows.Controls;
 
 using System.Windows.Input;
 using game2048cs.Context;
-using game2048cs.Hints;
 using game2048cs.model;
 using game2048cs.View;
 
