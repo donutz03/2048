@@ -20,9 +20,7 @@ public partial class MainWindow
     private bool _wasGameOverShown;
     private readonly Grid _myGrid;
     private GameMenu _gameMenu;
-    private HintSystem _hintSystem;
-
-
+    
 
     public MainWindow()
     {
@@ -59,7 +57,6 @@ public partial class MainWindow
         _game.GetTextBlock(startPosition[1], startPosition[3], startPosition[5].ToString(), _myGrid);
         Content = mainContainer;
         
-        _hintSystem = new HintSystem(_game, _myGrid, mainContainer);
 
         using (var db = new GameDbContext())
         {
@@ -112,6 +109,5 @@ public partial class MainWindow
             MessageBox.Show("Game Over");
             _wasGameOverShown = true;
         }
-        _hintSystem.UpdateHint();
     }
 }
