@@ -97,16 +97,16 @@ public class GameAI
 
     private int CountEmptyCells(int[,] grid)
     {
-        int count = 0;
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
+        var count = 0;
+        for (var i = 0; i < 4; i++)
+            for (var j = 0; j < 4; j++)
                 if (grid[i,j] == 0) count++;
         return count;
     }
 
     private double CalculateMonotonicity(int[,] grid)
     {
-        double[] scores = new double[4]; 
+        var scores = new double[4]; 
 
         for (int i = 0; i < 4; i++)
         {

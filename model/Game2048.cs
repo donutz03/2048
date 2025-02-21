@@ -8,7 +8,12 @@ public class Game2048
     private readonly Grid _myGrid;
     private int[] OddsOfGetting2Or4 { get; }
     private static readonly Random Random = new Random();
-
+    public event EventHandler? StateChanged;
+    
+    protected virtual void OnStateChanged()
+    {
+        StateChanged?.Invoke(this, EventArgs.Empty);
+    }
     public Game2048(Grid grid)
     {
         _myGrid = grid;
@@ -78,6 +83,8 @@ public class Game2048
                 array[i, j] = currentRow[j];
             }
         }
+        OnStateChanged();
+
     }
     
     public  void MoveArrayLeft(int[,] array)
@@ -139,6 +146,8 @@ public class Game2048
             array[i, j] = currentRow[j];
         }
     }
+    OnStateChanged();
+
 }
 
     public void MoveArrayDown(int[,] array)
@@ -200,6 +209,8 @@ public class Game2048
                 array[i, j] = currentColumn[i];
             }
         }
+        OnStateChanged();
+
     }
 
     public void MoveArrayUp(int[,] array)
@@ -261,6 +272,8 @@ public class Game2048
                 array[i, j] = currentColumn[i];
             }
         }
+        OnStateChanged();
+
     }
     
     private string GetValueFromCell(int i, int j)
@@ -361,6 +374,8 @@ public class Game2048
             Grid.SetColumn(txt, j);
             myGrid.Children.Add(txt);
         }
+        OnStateChanged();
+
     }
 
     public int[]? RandomCoordinatesAndNumber(int[,] array)

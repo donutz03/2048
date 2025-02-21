@@ -16,13 +16,16 @@ public class GameMenu
     private readonly MainWindow _mainWindow;
     private readonly Menu _menu;
     private readonly Game2048 _game;
-    private HintSystem _hintSystem;
+    public HintSystem _hintSystem;
+    private readonly DockPanel _mainContainer; 
+
 
     
-    public GameMenu(MainWindow mainWindow, Game2048 game)
+    public GameMenu(MainWindow mainWindow, Game2048 game, DockPanel mainContainer)
     {
         _mainWindow = mainWindow;
         _game = game;
+        _mainContainer = mainContainer;
         _menu = new Menu
         {
             HorizontalAlignment = HorizontalAlignment.Left,
@@ -67,22 +70,36 @@ public class GameMenu
         _menu.Items.Add(scoresMenuItem);
     }
 
+    public void RecreateHintSystem()
+    {
+        if (_hintSystem != null)
+        {
+            var gameGrid = _mainContainer.Children.OfType<StackPanel>()
+                .FirstOrDefault()?.Children.OfType<Grid>().FirstOrDefault();
+
+            if (gameGrid != null)
+            {
+                _hintSystem = new HintSystem(_game, gameGrid, _mainContainer);
+                _hintSystem.ToggleVisibility();
+            }
+        }
+    }
+    
     private void HintItem_Click(object sender, RoutedEventArgs e)
     {
         if (_hintSystem == null)
         {
-            var mainContainer = _mainWindow.Content as DockPanel;
-            var gameGrid = mainContainer?.Children.OfType<StackPanel>()
+            var gameGrid = _mainContainer.Children.OfType<StackPanel>()
                 .FirstOrDefault()?.Children.OfType<Grid>().FirstOrDefault();
 
-            if (mainContainer != null && gameGrid != null)
+            if (gameGrid != null)
             {
-                _hintSystem = new HintSystem(_game, gameGrid, mainContainer);
+                _hintSystem = new HintSystem(_game, gameGrid, _mainContainer);
             }
         }
         else
         {
-            _hintSystem.ToggleVisibility();
+            _hintSystem?.ToggleVisibility();
         }
     }
 

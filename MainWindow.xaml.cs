@@ -3,6 +3,7 @@ using System.Windows.Controls;
 
 using System.Windows.Input;
 using game2048cs.Context;
+using game2048cs.Hints;
 using game2048cs.model;
 using game2048cs.View;
 
@@ -19,7 +20,7 @@ public partial class MainWindow
     private bool _wasGameOverShown;
     private readonly Grid _myGrid;
     private GameMenu _gameMenu;
-    
+    private readonly DockPanel _mainContainer;
 
     public MainWindow()
     {
@@ -28,7 +29,7 @@ public partial class MainWindow
         PreviewKeyDown += MainWindow_PreviewKeyDown;
 
 
-        var mainContainer = new DockPanel();
+        _mainContainer = new DockPanel();
         StackPanel gamePanel = new StackPanel
         {
             VerticalAlignment = VerticalAlignment.Center,
@@ -36,8 +37,9 @@ public partial class MainWindow
         };
         _myGrid = new Grid();
         _game = new Game2048(_myGrid);
-        _gameMenu = new GameMenu(this, _game);
-        mainContainer.Children.Add(_gameMenu.GetMenu());
+        _gameMenu = new GameMenu(this, _game, _mainContainer);
+        
+        _mainContainer.Children.Add(_gameMenu.GetMenu());
         DockPanel.SetDock(_gameMenu.GetMenu(), Dock.Top);
         Button newGameButton = new Button
         {
@@ -50,12 +52,12 @@ public partial class MainWindow
         newGameButton.Click += NewGame_Click;
         gamePanel.Children.Add(_myGrid);
         gamePanel.Children.Add(newGameButton);
-        mainContainer.Children.Add(gamePanel);
+        _mainContainer.Children.Add(gamePanel);
         int[] startPosition = _game.RandomPosition();
 
         _game.GetTextBlock(startPosition[0], startPosition[2], startPosition[4].ToString(), _myGrid);
         _game.GetTextBlock(startPosition[1], startPosition[3], startPosition[5].ToString(), _myGrid);
-        Content = mainContainer;
+        Content = _mainContainer;
         
 
         using (var db = new GameDbContext())
@@ -114,7 +116,10 @@ public partial class MainWindow
         _myGrid.Children.Clear();
 
         _game = new Game2048(_myGrid);
-
+        if (_gameMenu._hintSystem != null)
+        {
+            _gameMenu.RecreateHintSystem();
+        }
         _wasGameOverShown = false;
 
         int[] startPosition = _game.RandomPosition();

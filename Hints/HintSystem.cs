@@ -12,12 +12,16 @@ public class HintSystem
     private Button _toggleHintsButton;
     private bool _hintsEnabled = true;
     private readonly StackPanel _hintPanel;
+    private readonly GameAI _ai;
 
     public HintSystem(Game2048 game, Grid gameGrid, DockPanel mainContainer)
     {
         _game = game;
         _gameGrid = gameGrid;
+        _ai = new GameAI();
         
+        _game.StateChanged += (sender, args) => UpdateHint();
+
         _hintPanel = new StackPanel
         {
             Margin = new Thickness(20, 0, 0, 0),
@@ -76,44 +80,51 @@ public class HintSystem
         if (!_hintsEnabled) return;
 
         var matrix = _game.Get2048Matrix();
-        var bestMove = GetBestMove(matrix);
-        _hintTextBlock.Text = $"Swipe {bestMove}";
+        var bestMove = _ai.GetBestMove(matrix);
+       var potentialScore = EvaluateMove(matrix, bestMove);
+        
+        _hintTextBlock.Text = $"Suggested move: {bestMove}\nPotential score: {potentialScore}";
     }
 
-    private readonly GameAI _ai = new GameAI();
 
     private string GetBestMove(int[,] matrix)
     {
         var direction = _ai.GetBestMove(matrix);
         return direction.ToString();
     }
+    
+    private int EvaluateMove(int[,] matrix, GameAI.Direction direction)
+    {
+        var simulatedMatrix = SimulateMove(matrix, direction);
+        return CalculateMoveScore(matrix, simulatedMatrix);
+    }
 
-    private int EvaluateMove(int[,] originalMatrix, string move)
+    private int[,] SimulateMove(int[,] originalMatrix, GameAI.Direction direction)
     {
         var matrix = (int[,])originalMatrix.Clone();
         
-        switch (move)
+        switch (direction)
         {
-            case "LEFT":
+            case GameAI.Direction.Left:
                 SimulateMoveLeft(matrix);
                 break;
-            case "RIGHT":
+            case GameAI.Direction.Right:
                 SimulateMoveRight(matrix);
                 break;
-            case "UP":
+            case GameAI.Direction.Up:
                 SimulateMoveUp(matrix);
                 break;
-            case "DOWN":
+            case GameAI.Direction.Down:
                 SimulateMoveDown(matrix);
                 break;
         }
 
-        return CalculateMoveScore(originalMatrix, matrix);
+        return matrix;
     }
-
-    private int CalculateMoveScore(int[,] before, int[,] after)
+    private int CalculateMoveScore(int[,] before, int[,] after) 
     {
         int score = 0;
+        int maxTile = 0;
 
         for (int i = 0; i < 4; i++)
         {
@@ -121,19 +132,19 @@ public class HintSystem
             {
                 if (after[i,j] > before[i,j])
                 {
-                    score += after[i,j] * 2;
-                    
-                    if ((i == 0 || i == 3) && (j == 0 || j == 3))
-                    {
-                        score += after[i,j];
-                    }
+                    score += after[i,j];
                 }
+                maxTile = Math.Max(maxTile, after[i,j]);
             }
         }
 
-        score += CountEmptyCells(after) * 100;
+        if ((after[0,0] == maxTile || after[0,3] == maxTile || 
+             after[3,0] == maxTile || after[3,3] == maxTile))
+        {
+            score += maxTile;
+        }
 
-        score += CalculateMonotonicityScore(after) * 50;
+        score += CountEmptyCells(after) * 100;
 
         return score;
     }
@@ -147,36 +158,7 @@ public class HintSystem
         return count;
     }
 
-    private int CalculateMonotonicityScore(int[,] matrix)
-    {
-        int score = 0;
-        
-        for (int i = 0; i < 4; i++)
-        {
-            bool increasing = true;
-            bool decreasing = true;
-            for (int j = 1; j < 4; j++)
-            {
-                if (matrix[i,j] < matrix[i,j-1]) increasing = false;
-                if (matrix[i,j] > matrix[i,j-1]) decreasing = false;
-            }
-            if (increasing || decreasing) score++;
-        }
-
-        for (int j = 0; j < 4; j++)
-        {
-            bool increasing = true;
-            bool decreasing = true;
-            for (int i = 1; i < 4; i++)
-            {
-                if (matrix[i,j] < matrix[i-1,j]) increasing = false;
-                if (matrix[i,j] > matrix[i-1,j]) decreasing = false;
-            }
-            if (increasing || decreasing) score++;
-        }
-
-        return score;
-    }
+   
 
     private void SimulateMoveLeft(int[,] matrix)
     {
