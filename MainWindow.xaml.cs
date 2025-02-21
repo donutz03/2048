@@ -2,7 +2,9 @@
 using System.Windows.Controls;
 
 using System.Windows.Input;
+using game2048cs.Context;
 using game2048cs.model;
+using game2048cs.View;
 
 
 namespace game2048cs;
@@ -16,12 +18,16 @@ public partial class MainWindow
     private Game2048 _game;
     private bool _wasGameOverShown;
     private readonly Grid _myGrid;
+    private GameMenu _gameMenu;
+
 
     public MainWindow()
     {
         
         InitializeComponent();
         KeyDown += MainWindow_KeyDown;
+
+        var mainContainer = new DockPanel();
         StackPanel gamePanel = new StackPanel
         {
             VerticalAlignment = VerticalAlignment.Center,
@@ -29,6 +35,9 @@ public partial class MainWindow
         };
         _myGrid = new Grid();
         _game = new Game2048(_myGrid);
+        _gameMenu = new GameMenu(this, _game);
+        mainContainer.Children.Add(_gameMenu.GetMenu());
+        DockPanel.SetDock(_gameMenu.GetMenu(), Dock.Top);
         Button newGameButton = new Button
         {
             Content = "New Game",
@@ -36,17 +45,24 @@ public partial class MainWindow
             Height = 30,
             Margin = new Thickness(0, 10, 0, 0) 
         };
+        
         newGameButton.Click += NewGame_Click;
         gamePanel.Children.Add(_myGrid);
         gamePanel.Children.Add(newGameButton);
+        mainContainer.Children.Add(gamePanel);
         int[] startPosition = _game.RandomPosition();
 
         _game.GetTextBlock(startPosition[0], startPosition[2], startPosition[4].ToString(), _myGrid);
         _game.GetTextBlock(startPosition[1], startPosition[3], startPosition[5].ToString(), _myGrid);
-        Content = gamePanel;
+        Content = mainContainer;
+        
+        using (var db = new GameDbContext())
+        {
+            db.Database.EnsureCreated();
+        }
     }
-    
-    private void NewGame_Click(object sender, RoutedEventArgs e)
+
+    public void NewGame_Click(object sender, RoutedEventArgs e)
     {
         
         _myGrid.Children.Clear();
