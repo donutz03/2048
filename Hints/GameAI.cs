@@ -1,4 +1,4 @@
-﻿namespace game2048cs.model;
+﻿namespace game2048cs.Hints;
 
 public class GameAI
 {
@@ -188,59 +188,180 @@ public class GameAI
         return score;
     }
 
-    private int[,] SimulateMove(int[,] grid, Direction dir)
-    {
-        var newGrid = (int[,])grid.Clone();
-        bool merged = false;
+private int[,] SimulateMove(int[,] grid, Direction dir)
+{
+    var newGrid = (int[,])grid.Clone();
+    bool merged = false;
 
-        switch (dir)
-        {
-            case Direction.Left:
-                for (int i = 0; i < 4; i++)
+    switch (dir)
+    {
+        case Direction.Left:
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 3; j++)
                 {
-                    for (int j = 0; j < 3; j++)
+                    if (newGrid[i,j] != 0)
                     {
-                        if (newGrid[i,j] != 0)
+                        for (int k = j + 1; k < 4; k++)
                         {
-                            for (int k = j + 1; k < 4; k++)
+                            if (newGrid[i,k] != 0)
                             {
-                                if (newGrid[i,k] != 0)
+                                if (newGrid[i,j] == newGrid[i,k])
                                 {
-                                    if (newGrid[i,j] == newGrid[i,k])
-                                    {
-                                        newGrid[i,j] *= 2;
-                                        newGrid[i,k] = 0;
-                                        merged = true;
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    for (int j = 0; j < 3; j++)
-                    {
-                        if (newGrid[i,j] == 0)
-                        {
-                            for (int k = j + 1; k < 4; k++)
-                            {
-                                if (newGrid[i,k] != 0)
-                                {
-                                    newGrid[i,j] = newGrid[i,k];
+                                    newGrid[i,j] *= 2;
                                     newGrid[i,k] = 0;
                                     merged = true;
-                                    break;
                                 }
+                                break;
                             }
                         }
                     }
                 }
-                break;
+                for (int j = 0; j < 3; j++)
+                {
+                    if (newGrid[i,j] == 0)
+                    {
+                        for (int k = j + 1; k < 4; k++)
+                        {
+                            if (newGrid[i,k] != 0)
+                            {
+                                newGrid[i,j] = newGrid[i,k];
+                                newGrid[i,k] = 0;
+                                merged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
 
-            // TODO: Similar implementations for RIGHT, UP, and DOWN...
-        }
+        case Direction.Right:
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 3; j > 0; j--)
+                {
+                    if (newGrid[i,j] != 0)
+                    {
+                        for (int k = j - 1; k >= 0; k--)
+                        {
+                            if (newGrid[i,k] != 0)
+                            {
+                                if (newGrid[i,j] == newGrid[i,k])
+                                {
+                                    newGrid[i,j] *= 2;
+                                    newGrid[i,k] = 0;
+                                    merged = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (int j = 3; j > 0; j--)
+                {
+                    if (newGrid[i,j] == 0)
+                    {
+                        for (int k = j - 1; k >= 0; k--)
+                        {
+                            if (newGrid[i,k] != 0)
+                            {
+                                newGrid[i,j] = newGrid[i,k];
+                                newGrid[i,k] = 0;
+                                merged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
 
-        return merged ? newGrid : grid;
+        case Direction.Up:
+            for (int j = 0; j < 4; j++)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    if (newGrid[i,j] != 0)
+                    {
+                        for (int k = i + 1; k < 4; k++)
+                        {
+                            if (newGrid[k,j] != 0)
+                            {
+                                if (newGrid[i,j] == newGrid[k,j])
+                                {
+                                    newGrid[i,j] *= 2;
+                                    newGrid[k,j] = 0;
+                                    merged = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < 3; i++)
+                {
+                    if (newGrid[i,j] == 0)
+                    {
+                        for (int k = i + 1; k < 4; k++)
+                        {
+                            if (newGrid[k,j] != 0)
+                            {
+                                newGrid[i,j] = newGrid[k,j];
+                                newGrid[k,j] = 0;
+                                merged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+
+        case Direction.Down:
+            for (int j = 0; j < 4; j++)
+            {
+                for (int i = 3; i > 0; i--)
+                {
+                    if (newGrid[i,j] != 0)
+                    {
+                        for (int k = i - 1; k >= 0; k--)
+                        {
+                            if (newGrid[k,j] != 0)
+                            {
+                                if (newGrid[i,j] == newGrid[k,j])
+                                {
+                                    newGrid[i,j] *= 2;
+                                    newGrid[k,j] = 0;
+                                    merged = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (int i = 3; i > 0; i--)
+                {
+                    if (newGrid[i,j] == 0)
+                    {
+                        for (int k = i - 1; k >= 0; k--)
+                        {
+                            if (newGrid[k,j] != 0)
+                            {
+                                newGrid[i,j] = newGrid[k,j];
+                                newGrid[k,j] = 0;
+                                merged = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
     }
+
+    return merged ? newGrid : grid;
+}
 
     private bool GridsEqual(int[,] grid1, int[,] grid2)
     {
