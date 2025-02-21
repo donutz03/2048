@@ -1,4 +1,7 @@
-﻿namespace game2048cs.View;
+﻿using System.Windows.Input;
+using game2048cs.Hints;
+
+namespace game2048cs.View;
 
 
 using game2048cs.model;
@@ -13,6 +16,8 @@ public class GameMenu
     private readonly MainWindow _mainWindow;
     private readonly Menu _menu;
     private readonly Game2048 _game;
+    private HintSystem _hintSystem;
+
     
     public GameMenu(MainWindow mainWindow, Game2048 game)
     {
@@ -23,8 +28,18 @@ public class GameMenu
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top
         };
+        _menu.PreviewKeyDown += Menu_PreviewKeyDown;
 
         InitializeMenu();
+    }
+    
+    private void Menu_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Left || e.Key == Key.Right || 
+            e.Key == Key.Up || e.Key == Key.Down)
+        {
+            e.Handled = true;
+        }
     }
 
     private void InitializeMenu()
@@ -54,8 +69,21 @@ public class GameMenu
 
     private void HintItem_Click(object sender, RoutedEventArgs e)
     {
-        // TODO: Implement hint logic
-        MessageBox.Show("Hint feature coming soon!");
+        if (_hintSystem == null)
+        {
+            var mainContainer = _mainWindow.Content as DockPanel;
+            var gameGrid = mainContainer?.Children.OfType<StackPanel>()
+                .FirstOrDefault()?.Children.OfType<Grid>().FirstOrDefault();
+
+            if (mainContainer != null && gameGrid != null)
+            {
+                _hintSystem = new HintSystem(_game, gameGrid, mainContainer);
+            }
+        }
+        else
+        {
+            _hintSystem.ToggleVisibility();
+        }
     }
 
     private void WatchSolutionItem_Click(object sender, RoutedEventArgs e)
