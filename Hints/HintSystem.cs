@@ -13,11 +13,13 @@ public class HintSystem
     private bool _hintsEnabled = true;
     private readonly StackPanel _hintPanel;
     private readonly GameAI _ai;
+    private readonly Grid _containerGrid;
 
-    public HintSystem(Game2048 game, Grid gameGrid, DockPanel mainContainer)
+    public HintSystem(Game2048 game, Grid gameGrid, Grid containerGrid)
     {
         _game = game;
         _gameGrid = gameGrid;
+        _containerGrid = containerGrid;
         _ai = new GameAI();
         
         _game.StateChanged += (sender, args) => UpdateHint();
@@ -25,18 +27,24 @@ public class HintSystem
         _hintPanel = new StackPanel
         {
             Margin = new Thickness(20, 0, 0, 0),
-            VerticalAlignment = VerticalAlignment.Center
+            VerticalAlignment = VerticalAlignment.Center,
+            HorizontalAlignment = HorizontalAlignment.Center
         };
 
         _hintTextBlock = new TextBlock
         {
             FontSize = 18,
-            Margin = new Thickness(0, 0, 0, 10)
+            Margin = new Thickness(0, 0, 0, 10),
+            HorizontalAlignment = HorizontalAlignment.Center,
+            TextAlignment = TextAlignment.Center,
+            TextWrapping = TextWrapping.Wrap,
+            Width = 180 
         };
 
         _toggleHintsButton = new Button
         {
             Content = "Turn Off Hints",
+            HorizontalAlignment = HorizontalAlignment.Center,
             Width = 100,
             Height = 30
         };
@@ -45,8 +53,8 @@ public class HintSystem
         _hintPanel.Children.Add(_hintTextBlock);
         _hintPanel.Children.Add(_toggleHintsButton);
 
-        mainContainer.Children.Add(_hintPanel);
-        DockPanel.SetDock(_hintPanel, Dock.Right);
+        Grid.SetColumn(_hintPanel, 2);
+        _containerGrid.Children.Add(_hintPanel);
     }
 
     public void ToggleVisibility()

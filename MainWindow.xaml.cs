@@ -30,6 +30,21 @@ public partial class MainWindow
 
 
         _mainContainer = new DockPanel();
+        var gameContainer = new Grid();
+        gameContainer.ColumnDefinitions.Add(
+            new ColumnDefinition
+            {
+                Width = new GridLength(1, GridUnitType.Star)
+            });
+        gameContainer.ColumnDefinitions.Add(
+            new ColumnDefinition
+            {
+                Width = new GridLength(1, GridUnitType.Star)
+            });
+        gameContainer.ColumnDefinitions.Add(new ColumnDefinition
+        {
+            Width = new GridLength(1, GridUnitType.Star)
+        });
         StackPanel gamePanel = new StackPanel
         {
             VerticalAlignment = VerticalAlignment.Center,
@@ -37,7 +52,7 @@ public partial class MainWindow
         };
         _myGrid = new Grid();
         _game = new Game2048(_myGrid);
-        _gameMenu = new GameMenu(this, _game, _mainContainer);
+        _gameMenu = new GameMenu(this, _game, gameContainer);
         
         _mainContainer.Children.Add(_gameMenu.GetMenu());
         DockPanel.SetDock(_gameMenu.GetMenu(), Dock.Top);
@@ -52,7 +67,9 @@ public partial class MainWindow
         newGameButton.Click += NewGame_Click;
         gamePanel.Children.Add(_myGrid);
         gamePanel.Children.Add(newGameButton);
-        _mainContainer.Children.Add(gamePanel);
+        Grid.SetColumn(gamePanel, 1);
+        gameContainer.Children.Add(gamePanel);
+        _mainContainer.Children.Add(gameContainer);
         int[] startPosition = _game.RandomPosition();
 
         _game.GetTextBlock(startPosition[0], startPosition[2], startPosition[4].ToString(), _myGrid);
