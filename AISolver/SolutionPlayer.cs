@@ -106,7 +106,7 @@ namespace game2048cs.AISolver
             {
                 GameAI.Direction bestMove = _ai.GetBestMove(matrix);
                 
-                Console.WriteLine($"AI move: {bestMove}");
+                // Console.WriteLine($"AI move: {bestMove}");
                 
                 ApplyMove(matrix, bestMove);
                 
