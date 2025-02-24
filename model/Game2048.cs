@@ -369,8 +369,13 @@ public class Game2048
                 Style = Application.Current.FindResource("TileTextBlockStyle") as Style,
                 Width = 100,
                 Height = 100,
-                Margin = new Thickness(8)
+                Margin = new Thickness(8),
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
             };
+            txt.Padding = new Thickness(0, 10, 0, 0);
+
             Grid.SetRow(txt, i);
             Grid.SetColumn(txt, j);
             myGrid.Children.Add(txt);
