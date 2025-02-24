@@ -55,6 +55,9 @@ public class HintSystem
 
         Grid.SetColumn(_hintPanel, 2);
         _containerGrid.Children.Add(_hintPanel);
+        
+        UpdateHint();
+
     }
 
     public void ToggleVisibility()
