@@ -129,7 +129,8 @@ public partial class MainWindow
 
     public void NewGame_Click(object sender, RoutedEventArgs e)
     {
-        
+        _gameMenu.StopSolutionIfPlaying();
+
         _myGrid.Children.Clear();
 
         _game = new Game2048(_myGrid);
@@ -142,6 +143,21 @@ public partial class MainWindow
         int[] startPosition = _game.RandomPosition();
         _game.GetTextBlock(startPosition[0], startPosition[2], startPosition[4].ToString(), _myGrid);
         _game.GetTextBlock(startPosition[1], startPosition[3], startPosition[5].ToString(), _myGrid);
+    }
+    
+    public KeyEventHandler GetKeyDownHandler()
+    {
+        return MainWindow_PreviewKeyDown;
+    }
+
+    public void DisableKeyHandler()
+    {
+        PreviewKeyDown -= MainWindow_PreviewKeyDown;
+    }
+
+    public void RestoreKeyHandler(KeyEventHandler handler)
+    {
+        PreviewKeyDown += handler;
     }
 
 }

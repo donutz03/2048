@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+using game2048cs.AISolver;
 using game2048cs.Hints;
 
 namespace game2048cs.View;
@@ -18,6 +19,8 @@ public class GameMenu
     private readonly Game2048 _game;
     public HintSystem _hintSystem;
     private readonly Grid _gameContainer; 
+    private SolutionPlayer _solutionPlayer;
+
 
 
     
@@ -105,8 +108,26 @@ public class GameMenu
 
     private void WatchSolutionItem_Click(object sender, RoutedEventArgs e)
     {
-        // TODO: Implement solution watching logic
-        MessageBox.Show("Watch solution feature coming soon!");
+        if (_solutionPlayer == null)
+        {
+            _solutionPlayer = new SolutionPlayer(_game, _mainWindow);
+        }
+    
+        var result = MessageBox.Show(
+            "Do you want to watch the AI solve this game from the current state?", 
+            "Watch Solution", 
+            MessageBoxButton.YesNo, 
+            MessageBoxImage.Question);
+    
+        if (result == MessageBoxResult.Yes)
+        {
+            _solutionPlayer.StartPlaying();
+        }
+    }
+    
+    public void StopSolutionIfPlaying()
+    {
+        _solutionPlayer?.StopPlaying();
     }
 
     private void ViewScoresItem_Click(object sender, RoutedEventArgs e)
