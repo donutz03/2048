@@ -316,11 +316,12 @@ public class Game2048
     {
         if (!(myGrid.ColumnDefinitions.Count == 4 && myGrid.RowDefinitions.Count == 4))
         {
-            myGrid.Width = 250;
-            myGrid.Height = 100;
+            myGrid.Style = Application.Current.FindResource("GameGridStyle") as Style;
+            // myGrid.Width = 250;
+            // myGrid.Height = 100;
             myGrid.HorizontalAlignment = HorizontalAlignment.Center;
             myGrid.VerticalAlignment = VerticalAlignment.Center;
-            myGrid.ShowGridLines = true;
+            myGrid.ShowGridLines = false; //was true
         }
         
 
@@ -351,7 +352,7 @@ public class Game2048
         }
     }
 
-    public  void GetTextBlock(int i, int j, String numberInPosition, Grid myGrid)
+    public void GetTextBlock(int i, int j, String numberInPosition, Grid myGrid)
     {
         TextBlock? existingTb = myGrid.Children.OfType<TextBlock>()
             .FirstOrDefault(tb => Grid.GetRow(tb) == i && Grid.GetColumn(tb) == j);
@@ -365,19 +366,17 @@ public class Game2048
             TextBlock txt = new TextBlock
             {
                 Text = numberInPosition,
-                FontSize = 20,
-                TextAlignment = TextAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                HorizontalAlignment = HorizontalAlignment.Center
+                Style = Application.Current.FindResource("TileTextBlockStyle") as Style,
+                Width = 100,
+                Height = 100,
+                Margin = new Thickness(8)
             };
             Grid.SetRow(txt, i);
             Grid.SetColumn(txt, j);
             myGrid.Children.Add(txt);
         }
         OnStateChanged();
-
     }
-
     public int[]? RandomCoordinatesAndNumber(int[,] array)
     {
       
