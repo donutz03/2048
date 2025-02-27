@@ -4,13 +4,9 @@ using game2048cs.Hints;
 
 namespace game2048cs.View;
 
-
 using game2048cs.model;
-
-
 using System.Windows;
 using System.Windows.Controls;
-
 
 public class GameMenu
 {
@@ -20,10 +16,9 @@ public class GameMenu
     public HintSystem _hintSystem;
     private readonly Grid _gameContainer; 
     private SolutionPlayer _solutionPlayer;
+    private MenuItem _hintItem;
+    private MenuItem _watchSolutionItem;
 
-
-
-    
     public GameMenu(MainWindow mainWindow, Game2048 game, Grid mainContainer)
     {
         _mainWindow = mainWindow;
@@ -56,12 +51,12 @@ public class GameMenu
         gameMenuItem.Items.Add(newGameItem);
 
         var helpMenuItem = new MenuItem { Header = "Help" };
-        var hintItem = new MenuItem { Header = "Hint" };
-        hintItem.Click += HintItem_Click;
-        var watchSolutionItem = new MenuItem { Header = "Watch Solution" };
-        watchSolutionItem.Click += WatchSolutionItem_Click;
-        helpMenuItem.Items.Add(hintItem);
-        helpMenuItem.Items.Add(watchSolutionItem);
+        _hintItem = new MenuItem { Header = "Get Hints" };
+        _hintItem.Click += HintItem_Click;
+        _watchSolutionItem = new MenuItem { Header = "Watch Solution" };
+        _watchSolutionItem.Click += WatchSolutionItem_Click;
+        helpMenuItem.Items.Add(_hintItem);
+        helpMenuItem.Items.Add(_watchSolutionItem);
 
         var scoresMenuItem = new MenuItem { Header = "Scores" };
         var viewScoresItem = new MenuItem { Header = "View Scores" };
@@ -71,6 +66,12 @@ public class GameMenu
         _menu.Items.Add(gameMenuItem);
         _menu.Items.Add(helpMenuItem);
         _menu.Items.Add(scoresMenuItem);
+    }
+
+    public void SetHelpMenuItemsEnabled(bool enabled)
+    {
+        _hintItem.IsEnabled = enabled;
+        _watchSolutionItem.IsEnabled = enabled;
     }
 
     public void RecreateHintSystem()
@@ -110,7 +111,7 @@ public class GameMenu
     {
         if (_solutionPlayer == null)
         {
-            _solutionPlayer = new SolutionPlayer(_game, _mainWindow);
+            _solutionPlayer = new SolutionPlayer(_game, _mainWindow, this);
         }
     
         var result = MessageBox.Show(
