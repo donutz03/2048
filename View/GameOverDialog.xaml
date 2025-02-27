@@ -5,7 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:game2048cs.View"
         mc:Ignorable="d"
-        Title="Game over" Height="250" Width="300">
+        Title="Game over" Height="300" Width="300">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

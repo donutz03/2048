@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using game2048cs.Hints;
 using game2048cs.model;
+using game2048cs.View;
 
 namespace game2048cs.AISolver
 {
@@ -234,8 +235,13 @@ namespace game2048cs.AISolver
             
             if (_game.IsGameOver(matrix))
             {
-                StopPlaying();
-                MessageBox.Show("AI solution completed. Game over!", "2048 Solution", MessageBoxButton.OK, MessageBoxImage.Information);
+                int score = _game.CalculateScore(matrix);
+                int maxNumber = _game.FindMaxNumber(matrix);
+        
+                var gameOverDialog = new GameOverDialog(score, maxNumber);
+                gameOverDialog.Owner = _mainWindow;
+                gameOverDialog.ShowDialog();
+        
                 return;
             }
 

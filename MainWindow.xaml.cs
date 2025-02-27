@@ -121,8 +121,8 @@ public partial class MainWindow
             {
                 _wasGameOverShown = true;
             
-                int score = CalculateScore(matrix2048);
-                int maxNumber = FindMaxNumber(matrix2048);
+                int score = _game.CalculateScore(matrix2048);
+                int maxNumber = _game.FindMaxNumber(matrix2048);
             
                 var gameOverDialog = new GameOverDialog(score, maxNumber);
                 gameOverDialog.Owner = this;
@@ -165,34 +165,5 @@ public partial class MainWindow
     {
         PreviewKeyDown += handler;
     }
-
     
-    private int CalculateScore(int[,] matrix)
-    {
-        int score = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                score += matrix[i, j];
-            }
-        }
-        return score;
-    }
-
-    private int FindMaxNumber(int[,] matrix)
-    {
-        int max = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                if (matrix[i, j] > max)
-                {
-                    max = matrix[i, j];
-                }
-            }
-        }
-        return max;
-    }
 }
