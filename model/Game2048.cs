@@ -21,260 +21,221 @@ public class Game2048
         OddsOfGetting2Or4 = Get10PercentOddsFor4InStartingPosition();
     }
     
-    
-    public  void MoveArrayRight(int[,] array)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            int[] currentRow = new int[4];
-            for (int j = 0; j < 4; j++)
-            {
-                currentRow[j] = array[i, j];
-            }
-
-            for (int step = 0; step < 3; step++)
-            {
-                for (int j = 3; j > 0; j--)
-                {
-                    if (currentRow[j] == 0)
-                    {
-                        currentRow[j] = currentRow[j - 1];
-                        currentRow[j - 1] = 0;
-                    }
-                }
-
-                for (int j = 0; j < 4; j++)
-                {
-                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                        .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
-                    tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
-                    // TODO: text block.redraw
-                }
-            }
-
-            for (int j = 3; j > 0; j--)
-            {
-                if (currentRow[j] == currentRow[j - 1] && currentRow[j] != 0)
-                {
-                    currentRow[j] *= 2;
-                    currentRow[j - 1] = 0;
-
-                    for (int k = 0; k < 4; k++)
-                    {
-                        TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                            .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == k);
-                        tb.Text = currentRow[k] == 0 ? "" : currentRow[k].ToString();
-                    }
-
-
-                    for (int k = j - 1; k > 0; k--)
-                    {
-                        if (currentRow[k] == 0)
-                        {
-                            currentRow[k] = currentRow[k - 1];
-                            currentRow[k - 1] = 0;
-                        }
-                    }
-                }
-            }
-
-            for (int j = 0; j < 4; j++)
-            {
-                array[i, j] = currentRow[j];
-            }
-        }
-        OnStateChanged();
-
-    }
-    
-    public  void MoveArrayLeft(int[,] array)
+public void MoveArrayRight(int[,] array)
 {
+    bool moved = false;
+    
     for (int i = 0; i < 4; i++)
     {
-        int[] currentRow = new int[4];
-        for (int j = 0; j < 4; j++)
+        for (int j = 2; j >= 0; j--)
         {
-            currentRow[j] = array[i, j];
-        }
-
-        for (int step = 0; step < 3; step++)
-        {
-            for (int j = 0; j < 3; j++) 
+            if (array[i, j] != 0)
             {
-                if (currentRow[j] == 0)
+                int k = j;
+                while (k + 1 < 4 && array[i, k + 1] == 0)
                 {
-                    currentRow[j] = currentRow[j + 1];
-                    currentRow[j + 1] = 0;
+                    array[i, k + 1] = array[i, k];
+                    array[i, k] = 0;
+                    k++;
+                    moved = true;
                 }
             }
-
-            for (int j = 0; j < 4; j++)
-            {
-                TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                    .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
-                tb.Text = currentRow[j] == 0 ? "" : currentRow[j].ToString();
-            }
         }
-
-        for (int j = 0; j < 3; j++) 
+        
+        for (int j = 3; j > 0; j--)
         {
-            if (currentRow[j] == currentRow[j + 1] && currentRow[j] != 0)
+            if (array[i, j] != 0 && array[i, j] == array[i, j - 1])
             {
-                currentRow[j] *= 2;
-                currentRow[j + 1] = 0;
-
-                for (int k = 0; k < 4; k++)
+                array[i, j] *= 2;
+                array[i, j - 1] = 0;
+                moved = true;
+                
+                for (int k = j - 1; k > 0; k--)
                 {
-                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                        .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == k);
-                    tb.Text = currentRow[k] == 0 ? "" : currentRow[k].ToString();
-                }
-
-                for (int k = j + 1; k < 3; k++)
-                {
-                    if (currentRow[k] == 0)
+                    if (array[i, k] == 0 && array[i, k - 1] != 0)
                     {
-                        currentRow[k] = currentRow[k + 1];
-                        currentRow[k + 1] = 0;
+                        array[i, k] = array[i, k - 1];
+                        array[i, k - 1] = 0;
                     }
                 }
             }
         }
-
+        
         for (int j = 0; j < 4; j++)
         {
-            array[i, j] = currentRow[j];
+            TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+            tb.Text = array[i, j] == 0 ? "" : array[i, j].ToString();
         }
     }
-    OnStateChanged();
-
+    
+    if (moved)
+    {
+        OnStateChanged();
+    }
 }
 
-    public void MoveArrayDown(int[,] array)
+public void MoveArrayLeft(int[,] array)
+{
+    bool moved = false;
+    
+    for (int i = 0; i < 4; i++)
     {
-        for (int j = 0; j < 4; j++)
+        for (int j = 1; j < 4; j++)
         {
-            int[] currentColumn = new int[4];
-            for (int i = 0; i < 4; i++)
+            if (array[i, j] != 0)
             {
-                currentColumn[i] = array[i, j];
-            }
-
-            for (int step = 0; step < 3; step++)
-            {
-                for (int i = 3; i > 0; i--)
+                int k = j;
+                while (k - 1 >= 0 && array[i, k - 1] == 0)
                 {
-                    if (currentColumn[i] == 0)
-                    {
-                        currentColumn[i] = currentColumn[i - 1];
-                        currentColumn[i - 1] = 0;
-                    }
+                    array[i, k - 1] = array[i, k];
+                    array[i, k] = 0;
+                    k--;
+                    moved = true;
                 }
-
-                for (int i = 0; i < 4; i++)
-                {
-                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                        .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
-                    tb.Text = currentColumn[i] == 0 ? "" : currentColumn[i].ToString();
-                }
-            }
-
-            for (int i = 3; i > 0; i--)
-            {
-                if (currentColumn[i] == currentColumn[i - 1] && currentColumn[i] != 0)
-                {
-                    currentColumn[i] *= 2;
-                    currentColumn[i - 1] = 0;
-
-                    for (int k = 0; k < 4; k++)
-                    {
-                        TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                            .First(e => Grid.GetRow(e) == k && Grid.GetColumn(e) == j);
-                        tb.Text = currentColumn[k] == 0 ? "" : currentColumn[k].ToString();
-                    }
-
-                    for (int k = i - 1; k > 0; k--)
-                    {
-                        if (currentColumn[k] == 0)
-                        {
-                            currentColumn[k] = currentColumn[k - 1];
-                            currentColumn[k - 1] = 0;
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-                array[i, j] = currentColumn[i];
             }
         }
-        OnStateChanged();
-
-    }
-
-    public void MoveArrayUp(int[,] array)
-    {
-        for (int j = 0; j < 4; j++)
+        
+        for (int j = 0; j < 3; j++)
         {
-            int[] currentColumn = new int[4];
-            for (int i = 0; i < 4; i++)
+            if (array[i, j] != 0 && array[i, j] == array[i, j + 1])
             {
-                currentColumn[i] = array[i, j];
-            }
-
-            for (int step = 0; step < 3; step++)
-            {
-                for (int i = 0; i < 3; i++)
+                array[i, j] *= 2;
+                array[i, j + 1] = 0;
+                moved = true;
+                
+                for (int k = j + 1; k < 3; k++)
                 {
-                    if (currentColumn[i] == 0)
+                    if (array[i, k] == 0 && array[i, k + 1] != 0)
                     {
-                        currentColumn[i] = currentColumn[i + 1];
-                        currentColumn[i + 1] = 0;
+                        array[i, k] = array[i, k + 1];
+                        array[i, k + 1] = 0;
                     }
                 }
-
-                for (int i = 0; i < 4; i++)
-                {
-                    TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                        .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
-                    tb.Text = currentColumn[i] == 0 ? "" : currentColumn[i].ToString();
-                }
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                if (currentColumn[i] == currentColumn[i + 1] && currentColumn[i] != 0)
-                {
-                    currentColumn[i] *= 2;
-                    currentColumn[i + 1] = 0;
-
-                    for (int k = 0; k < 4; k++)
-                    {
-                        TextBlock tb = _myGrid.Children.OfType<TextBlock>()
-                            .First(e => Grid.GetRow(e) == k && Grid.GetColumn(e) == j);
-                        tb.Text = currentColumn[k] == 0 ? "" : currentColumn[k].ToString();
-                    }
-
-                    for (int k = i + 1; k < 3; k++)
-                    {
-                        if (currentColumn[k] == 0)
-                        {
-                            currentColumn[k] = currentColumn[k + 1];
-                            currentColumn[k + 1] = 0;
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-                array[i, j] = currentColumn[i];
             }
         }
-        OnStateChanged();
-
+        
+        for (int j = 0; j < 4; j++)
+        {
+            TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+            tb.Text = array[i, j] == 0 ? "" : array[i, j].ToString();
+        }
     }
+    
+    if (moved)
+    {
+        OnStateChanged();
+    }
+}
+
+public void MoveArrayDown(int[,] array)
+{
+    bool moved = false;
+    
+    for (int j = 0; j < 4; j++)
+    {
+        for (int i = 2; i >= 0; i--)
+        {
+            if (array[i, j] != 0)
+            {
+                int k = i;
+                while (k + 1 < 4 && array[k + 1, j] == 0)
+                {
+                    array[k + 1, j] = array[k, j];
+                    array[k, j] = 0;
+                    k++;
+                    moved = true;
+                }
+            }
+        }
+        
+        for (int i = 3; i > 0; i--)
+        {
+            if (array[i, j] != 0 && array[i, j] == array[i - 1, j])
+            {
+                array[i, j] *= 2;
+                array[i - 1, j] = 0;
+                moved = true;
+                
+                for (int k = i - 1; k > 0; k--)
+                {
+                    if (array[k, j] == 0 && array[k - 1, j] != 0)
+                    {
+                        array[k, j] = array[k - 1, j];
+                        array[k - 1, j] = 0;
+                    }
+                }
+            }
+        }
+        
+        for (int i = 0; i < 4; i++)
+        {
+            TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+            tb.Text = array[i, j] == 0 ? "" : array[i, j].ToString();
+        }
+    }
+    
+    if (moved)
+    {
+        OnStateChanged();
+    }
+}
+
+public void MoveArrayUp(int[,] array)
+{
+    bool moved = false;
+    
+    for (int j = 0; j < 4; j++)
+    {
+        for (int i = 1; i < 4; i++)
+        {
+            if (array[i, j] != 0)
+            {
+                int k = i;
+                while (k - 1 >= 0 && array[k - 1, j] == 0)
+                {
+                    array[k - 1, j] = array[k, j];
+                    array[k, j] = 0;
+                    k--;
+                    moved = true;
+                }
+            }
+        }
+        
+        for (int i = 0; i < 3; i++)
+        {
+            if (array[i, j] != 0 && array[i, j] == array[i + 1, j])
+            {
+                array[i, j] *= 2;
+                array[i + 1, j] = 0;
+                moved = true;
+                
+                for (int k = i + 1; k < 3; k++)
+                {
+                    if (array[k, j] == 0 && array[k + 1, j] != 0)
+                    {
+                        array[k, j] = array[k + 1, j];
+                        array[k + 1, j] = 0;
+                    }
+                }
+            }
+        }
+        
+        for (int i = 0; i < 4; i++)
+        {
+            TextBlock tb = _myGrid.Children.OfType<TextBlock>()
+                .First(e => Grid.GetRow(e) == i && Grid.GetColumn(e) == j);
+            tb.Text = array[i, j] == 0 ? "" : array[i, j].ToString();
+        }
+    }
+    
+    if (moved)
+    {
+        OnStateChanged();
+    }
+}
     
     private string GetValueFromCell(int i, int j)
     {
