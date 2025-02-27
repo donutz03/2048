@@ -4,7 +4,7 @@ using game2048cs.Hints;
 
 namespace game2048cs.View;
 
-using game2048cs.model;
+using model;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,7 +12,7 @@ public class GameMenu
 {
     private readonly MainWindow _mainWindow;
     private readonly Menu _menu;
-    private readonly Game2048 _game;
+    private Game2048 _game;
     public HintSystem _hintSystem;
     private readonly Grid _gameContainer; 
     private SolutionPlayer _solutionPlayer;
@@ -78,17 +78,31 @@ public class GameMenu
     {
         if (_hintSystem != null)
         {
+            var wasVisible = IsHintSystemVisible();
+
             var gameGrid = _gameContainer.Children.OfType<StackPanel>()
                 .FirstOrDefault()?.Children.OfType<Grid>().FirstOrDefault();
 
             if (gameGrid != null)
             {
+                var hintPanelElement = _gameContainer.Children.OfType<StackPanel>()
+                    .FirstOrDefault(sp => Grid.GetColumn(sp) == 2);
+
+                if (hintPanelElement != null)
+                {
+                    _gameContainer.Children.Remove(hintPanelElement);
+                }
+
                 _hintSystem = new HintSystem(_game, gameGrid, _gameContainer);
-                _hintSystem.ToggleVisibility();
+
+                if (!wasVisible)
+                {
+                    _hintSystem.ToggleVisibility();
+                }
             }
         }
     }
-    
+
     private void HintItem_Click(object sender, RoutedEventArgs e)
     {
         if (_hintSystem == null)
@@ -140,5 +154,48 @@ public class GameMenu
     public Menu GetMenu()
     {
         return _menu;
+    }
+    
+    public void UpdateGameReference(Game2048 game)
+    {
+        _game = game;
+    
+        if (_hintSystem != null)
+        {
+            var hintPanelElement = _gameContainer.Children.OfType<StackPanel>()
+                .FirstOrDefault(sp => Grid.GetColumn(sp) == 2);
+            
+            if (hintPanelElement != null)
+            {
+                _gameContainer.Children.Remove(hintPanelElement);
+            }
+        
+            var gameGrid = _gameContainer.Children.OfType<StackPanel>()
+                .FirstOrDefault()?.Children.OfType<Grid>().FirstOrDefault();
+            
+            if (gameGrid != null)
+            {
+                _hintSystem = new HintSystem(_game, gameGrid, _gameContainer);
+            
+                
+                if (!IsHintSystemVisible())
+                {
+                    _hintSystem.ToggleVisibility();
+                }
+            }
+        }
+    }
+    
+    private bool IsHintSystemVisible()
+    {
+        if (_hintSystem == null) return false;
+    
+        var fieldInfo = typeof(HintSystem).GetField("_hintPanel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (fieldInfo != null)
+        {
+            var panel = fieldInfo.GetValue(_hintSystem) as UIElement;
+            return panel != null && panel.Visibility == Visibility.Visible;
+        }
+        return false;
     }
 }

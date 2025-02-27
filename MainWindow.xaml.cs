@@ -140,10 +140,8 @@ public partial class MainWindow
         _myGrid.Children.Clear();
 
         _game = new Game2048(_myGrid);
-        if (_gameMenu._hintSystem != null)
-        {
-            _gameMenu.RecreateHintSystem();
-        }
+        _gameMenu.UpdateGameReference(_game);
+
         _wasGameOverShown = false;
 
         int[] startPosition = _game.RandomPosition();
