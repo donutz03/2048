@@ -235,13 +235,14 @@ namespace game2048cs.AISolver
             
             if (_game.IsGameOver(matrix))
             {
+                _timer.Stop();
                 int score = _game.CalculateScore(matrix);
                 int maxNumber = _game.FindMaxNumber(matrix);
         
                 var gameOverDialog = new GameOverDialog(score, maxNumber);
                 gameOverDialog.Owner = _mainWindow;
                 gameOverDialog.ShowDialog();
-        
+                StopPlaying();
                 return;
             }
 
