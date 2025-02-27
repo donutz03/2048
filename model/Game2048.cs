@@ -514,4 +514,33 @@ public class Game2048
         return true;
     }
 
+    public int CalculateScore(int[,] matrix)
+    {
+        int score = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                score += matrix[i, j];
+            }
+        }
+        return score;
+    }
+
+    public int FindMaxNumber(int[,] matrix)
+    {
+        int max = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (matrix[i, j] > max)
+                {
+                    max = matrix[i, j];
+                }
+            }
+        }
+        return max;
+    }
+    
 }
