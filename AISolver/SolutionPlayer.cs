@@ -275,7 +275,7 @@ namespace game2048cs.AISolver
                 case GameAI.Direction.Down:
                     _game.MoveArrayDown(matrix);
                     break;
-            }
+            }   
         }
 
         private System.Windows.Controls.Grid GetGameGrid()

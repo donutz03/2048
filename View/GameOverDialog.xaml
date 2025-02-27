@@ -1,0 +1,32 @@
+﻿<Window x:Class="game2048cs.View.GameOverDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:game2048cs.View"
+        mc:Ignorable="d"
+        Title="Game over" Height="250" Width="300">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Game Over!" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+        
+        <TextBlock x:Name="ScoreTextBlock" Grid.Row="1" Text="Your Score: 0" FontSize="16" Margin="0,5"/>
+        <TextBlock x:Name="MaxNumberTextBlock" Grid.Row="2" Text="Highest Tile: 0" FontSize="16" Margin="0,5"/>
+
+        <TextBlock Grid.Row="3" Text="Enter your name:" Margin="0,15,0,5"/>
+        <TextBox x:Name="PlayerNameTextBox" Grid.Row="4" Margin="0,0,0,15"/>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Save Score" Width="100" Height="30" Margin="0,0,10,0" Click="SaveButton_Click"/>
+            <Button Content="Cancel" Width="70" Height="30" Click="CancelButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
